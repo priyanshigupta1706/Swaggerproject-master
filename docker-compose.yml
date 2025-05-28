@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    container_name: event-booking-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: event_booking_db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    container_name: event-booking-api
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    command: npm run dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  db-data:
